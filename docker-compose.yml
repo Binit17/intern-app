@@ -1,0 +1,40 @@
+version: '3'
+services:
+  php-environment:
+    container_name: php-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - ./:/var/www/html/
+    ports:
+      - 8000:80
+  db:
+    container_name: db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: gautam
+      MYSQL_DATABASE: intern_app
+      MYSQL_USER: gautam
+      MYSQL_PASSWORD: gautam
+    # volumes:
+    #   - mysql-data:/var/lib/mysql # Mount the volume for data storage
+    volumes:
+      - "./sql_files:/docker-entrypoint-initdb.d"       #sync persistent sql files with container
+    ports:
+      - "9906:3306"
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+    restart: always
+    ports:
+      - 8081:80
+# volumes:
+#   mysql-data: # Define the volume
